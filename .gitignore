@@ -11,3 +11,6 @@ __pycache__/
 .DS_Store
 *.swp
 *~
+
+# host test binaries
+tests/core/test_game

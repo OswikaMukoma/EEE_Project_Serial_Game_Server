@@ -24,6 +24,7 @@ BUILD_DIR = build
 ######################################
 C_SOURCES =  \
 Core/Src/main.c \
+Core/Src/game.c \
 Core/Src/stm32f0xx_it.c \
 Core/Src/system_stm32f0xx.c \
 Core/Src/stm32f0xx_hal_msp.c \
