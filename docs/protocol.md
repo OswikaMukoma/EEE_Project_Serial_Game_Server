@@ -1,11 +1,11 @@
-# Message protocol - v0.1 DRAFT (becomes v1.0 when both partners sign off)
+# Message protocol - v1.0 FROZEN (12 Oct 2026)
 
-Single source of truth for the wire protocol. After the freeze, change it only by
-agreement and in the same commit as the code and the tests. Design reasons live
-in `decisions.md` (D-010, D-011).
+Single source of truth for the wire protocol. **Frozen:** change it only by
+agreement, in the same commit as the code and the tests, and record the change in
+section 14. Design reasons live in `decisions.md` (D-010, D-011, D-013).
 
-Status: **DRAFT for review.** Section 12 lists the choices we want both partners
-to look at before freezing.
+Status: **v1.0 FROZEN.** The six choices in section 12 were reviewed and accepted
+on 12 Oct 2026.
 
 ---
 
@@ -260,9 +260,9 @@ Diagram sources: `docs/diagrams/` (`*.dot` Graphviz, `*.mmd` Mermaid). Re-render
 
 Pins are from `Board.md` and are confirmed on the bench in Stage 4.
 
-## 12. Choices to review before the freeze
+## 12. Departures and additions (reviewed, all six accepted on 12 Oct 2026)
 
-Each one is a deliberate departure or addition. Say "keep" or "change" for each.
+Each one is a deliberate departure from, or addition to, the reference protocol in the brief. The report's section 2 must justify each.
 
 1. **Terminal replies carry the board** (`WIN:X:BOARD:...`, `DRAW:BOARD:...`). The
    brief shows only `WIN:X`. Ours saves the GUI a `STATE` round trip and lets it
@@ -296,3 +296,10 @@ Required-test map (for Stage 3): `CONNECT`/`NEW` replies (8.1), legal move chang
 exactly one cell (8.1), `OCCUPIED`/`RANGE` (8.2), move after game over `NOGAME`
 (8.1), scripted win (8.1) and draw (8.3), plus garbage, oversize, partial-frame
 timeout, and bad checksum (R1-R5).
+
+## 14. Change log
+
+| Version | Date | Change |
+|---|---|---|
+| v0.1 | 12 Oct 2026 | First complete draft |
+| v1.0 | 12 Oct 2026 | Frozen. All six section-12 choices accepted unchanged |

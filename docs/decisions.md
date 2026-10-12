@@ -77,3 +77,11 @@ Stage 1 started on 12 Oct, about four days behind the 6 Oct plan. Remaining
 window is 12-24 Oct (25 Oct is a Sunday and buffer only). Required features
 come first; if time runs short, cut stretch features in this order: undo,
 timer, then AI. See docs/stages.md "Revised schedule".
+
+## D-013 Protocol v1.0 frozen - ACCEPTED (2026-10-12), closes D-011
+All six items in protocol.md section 12 were accepted unchanged by the project
+owner on 12 Oct. The protocol is frozen at v1.0 and any later change goes through
+the change log (protocol.md section 14). Note: acceptance was recorded from the
+project owner's message; the second partner's separate sign-off is not recorded
+here. If they object, raise it before Stage 5 so firmware is not built on a
+changing spec.

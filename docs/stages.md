@@ -13,13 +13,14 @@ Drivers below are a suggestion (A/B) - fill in names in HANDOFF.md.
 - [ ] Partners confirm decisions D-001..D-004 in decisions.md
 - [ ] Project plan (brief A.1) with milestones and task allocation
 
-## Stage 1 - Protocol and FSM spec (A) - DRAFT WRITTEN 12 Oct, awaiting review
-- [x] docs/protocol.md v0.1: framing, 32-byte max, 500 ms timeout, XOR checksum,
+## Stage 1 - Protocol and FSM spec (A) - DONE 12 Oct (v1.0 frozen)
+- [x] docs/protocol.md: framing, 32-byte max, 500 ms timeout, XOR checksum,
       every command and error, full state table, validation order, invariants
 - [x] Diagrams in docs/diagrams (FSM, framer, two sequence diagrams) + render.sh
 - [x] Example checksums verified by script; example games replayed on a model
-- [ ] Both partners read protocol.md and answer the six questions in section 12
-- [ ] Freeze: change the header to v1.0 and record it in decisions.md
+- [x] Section 12 reviewed and accepted; frozen as v1.0 (D-013)
+- [ ] Explain-back: each partner explains the framer states and the validation
+      order in their own words (ask Claude for a quiz)
 
 ## Stage 2 - Portable game core (B)
 - [ ] game.c/.h, no HAL calls: board, validate-then-commit, win/draw, error codes
