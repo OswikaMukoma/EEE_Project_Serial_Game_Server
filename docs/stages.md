@@ -23,15 +23,15 @@ Drivers below are a suggestion (A/B) - fill in names in HANDOFF.md.
       order in their own words (ask Claude for a quiz)
 
 ## Stage 2 - Portable game core (B)
-- [ ] game.c/.h, no HAL calls: board, validate-then-commit, win/draw, error codes
-- [ ] PC unit tests: all 8 win lines, draw, every rejection, rejected move leaves
+- [x] game.c/.h, no HAL calls: board, validate-then-commit, win/draw, error codes
+- [x] PC unit tests: all 8 win lines, draw, every rejection, rejected move leaves
       board byte-identical
-- [ ] Report section draft (game logic and server authority)
+- [x] Report section draft (game logic and server authority)
 
 ## Stage 3 - Mock server and pytest harness (A)
-- [ ] Python mock server implementing protocol.md
-- [ ] pytest covering every bullet of the brief's test list + garbage input
-- [ ] `--port` option / env var; first evidence saved
+- [x] Python mock server implementing protocol.md
+- [x] pytest covering every bullet of the brief's test list + garbage input
+- [x] `--port` option / env var; first evidence saved
 
 ## Stage 4 - Hardware bring-up (B)
 - [x] UART path settled: ST-Link VCP, USART1 PA9/PA10 (D-008). Confirm AF number and port name on the bench

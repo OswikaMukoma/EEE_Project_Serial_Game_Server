@@ -85,3 +85,14 @@ the change log (protocol.md section 14). Note: acceptance was recorded from the
 project owner's message; the second partner's separate sign-off is not recorded
 here. If they object, raise it before Stage 5 so firmware is not built on a
 changing spec.
+
+## D-014 Stage 3 test design: mock over TCP + mutation check - ACCEPTED (2026-10-12)
+The mock server is an independent Python implementation of protocol.md, served on a
+local TCP port and opened with pyserial's `socket://127.0.0.1:PORT` URL, so tests, GUI
+and the real board (a COM port) share one code path; works on Windows (no pty).
+Tests only use the serial link and are written from the protocol, not the mock code.
+To show the tests can fail, `tests/mutation_check.py` injects 15 deliberate faults
+into the mock; each must make pytest fail. The first run caught 14/15: a broken
+2-4-6 diagonal went unnoticed, so tests for all 8 lines x 2 players were added
+(now 15/15, docs/evidence/stage3_mutation_check.txt). Limit: this validates the
+tests, not the firmware; the same suite runs on the board in Stage 7.
