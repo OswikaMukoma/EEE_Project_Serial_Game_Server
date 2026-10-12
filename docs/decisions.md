@@ -107,3 +107,10 @@ fetched text had Table 13 only; HAL gpio_ex.h lists USART1 under both AF0 and
 AF1 without saying which pins), so the build stops with #error until a partner
 reads the value from Table 14 and records it in bringup-log.md. BRR is
 (8 MHz + 57600) / 115200 = 69, about 0.6 % baud error at 8 MHz HSI.
+
+## D-016 USART1 alternate function = AF1 on PA9/PA10 - ACCEPTED (2026-10-12), closes the open part of D-015
+Read from the STM32F051 datasheet (DocID022265 Rev 4) Table 14, page 37, in the PDF the
+project owner supplied: PA9 AF1 = USART1_TX, PA10 AF1 = USART1_RX. board.h now defines
+UART_AF 1u. The UCT dev board schematic v1.06 (supplied) agrees with the pin plan: ST-Link
+VCP_RX/TX on PA9/PA10, SW0 on PA0, R/G LED on PB10/PB11 (R12 red, R13 green), D8 power LED.
+This is paper confirmation only; the bench tests in HANDOFF still have to pass.

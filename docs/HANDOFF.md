@@ -22,8 +22,8 @@ Claude cannot see or flash the board, so nothing below is verified on hardware y
 Prepared: firmware/Core/Src/bringup.c, `make -C firmware BRINGUP=1`, tests/bringup_check.py,
 UART_AF placeholder in board.h (D-015). Game build unchanged and still builds.
 Bench steps for the partner with the board (record each result in docs/bringup-log.md):
-1. Open the STM32F051C8 datasheet (DS8668) Table 14, rows PA9/PA10, read the AF number for
-   USART1_TX/RX; add `#define UART_AF <n>u` to firmware/Core/Inc/board.h; note page/table.
+1. DONE on paper (D-016): UART_AF = 1 from datasheet Table 14 p.37; schematic v1.06 agrees.
+   Just copy that into docs/bringup-log.md.
 2. `make -C firmware BRINGUP=1`, flash firmware/build/bringup/BringUp.bin (or .hex) with the
    usual tool; note the COM port name (Device Manager) in the log.
 3. T1: after reset, 3 red then 3 green blinks? Write down which colour came first and whether
