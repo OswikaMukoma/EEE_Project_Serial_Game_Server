@@ -1,0 +1,79 @@
+# Decisions log (append-only)
+
+Status: PROPOSED until both partners agree, then ACCEPTED. Never edit a past
+entry; add a new one that supersedes it. This feeds report section A.4.
+
+## D-001 Game: Tic-Tac-Toe - PROPOSED (2026-10-06)
+Baseline game, 3x3 board, simple win/draw. Marks come from correctness,
+robustness and evidence, not game complexity, so the time saved goes into tests
+and the report. Alternative considered: Connect-4 (only if Tic-Tac-Toe is solid).
+
+## D-002 Stretch features and order - PROPOSED (2026-10-06)
+Compulsory system first. Then: server-side AI (minimax; server plays so the
+client stays untrusted), hardware-timer move clock, move undo. Bonus is capped
+at 5 marks, so none of this may endanger the core. Skipped: two-client play
+(single UART), hidden-information games.
+
+## D-003 UART driven through CMSIS registers, no HAL UART - PROPOSED (2026-10-06)
+The course base includes no stm32f0xx_hal_uart.c. The brief allows "HAL
+libraries or direct register access". Register-level USART with an RX interrupt
+and ring buffer is small and easy to explain. Alternative: add HAL UART sources
+from STM32CubeF0 and enable HAL_UART_MODULE_ENABLED in stm32f0xx_hal_conf.h.
+UART instance and pins: see OPEN Q1 in docs/stages.md (not decided).
+
+## D-004 Integrity: checksum scheme - OPEN
+Brief recommends a per-message checksum or CRC. Options: `*XX` XOR of payload
+bytes, or CRC-8. Decide when writing protocol.md (Stage 1).
+
+## D-005 Separate project repo, base copied from Practical2_A - ACCEPTED (2026-10-06)
+The brief requires a link to the repo housing the server, and the course repo
+holds lab work. Copied only infrastructure from Practical_2/Practical2_A: HAL
+and CMSIS drivers, startup file, linker script, system/syscalls/interrupt files
+and the Makefile (adapted). Not copied: the practical's task files, handout or
+board_io. List this as reused material in the report references.
+
+## D-006 Build system: Makefile + arm-none-eabi-gcc - ACCEPTED (2026-10-06)
+Matches the course base. Imports into STM32CubeIDE as "Existing Code as Makefile
+Project". No .ioc file: peripherals are configured in code, so CubeMX is optional.
+Stage 0 check: base builds (flash 3164 B, RAM 1584 B with the placeholder main).
+
+## D-007 AI assistance - ACCEPTED (2026-10-06)
+No course restriction on AI use. We use Claude for drafting; both partners must
+be able to explain every line. Disclose in the report references.
+
+## D-008 UART path: on-board ST-Link virtual COM port, USART1 PA9/PA10 - ACCEPTED (2026-10-06)
+Supersedes open question Q1. Source: lecturer's announcement (newer UCT dev
+board: USART1 PA9 = TX, PA10 = RX is already wired to the ST-Link, which shows
+up as a serial port on the PC over the same USB cable used for flashing) and
+Board.md. The external STM32USB2UART adapter is NOT used; the lecturer asked for
+those to be returned. No extra wiring: the circuit diagram (A.3) shows one USB
+cable, ST-Link, USART1 PA9/PA10. Still to confirm on the bench: alternate-function
+number (STM32F051 datasheet AF table), baud (115200 8N1 proposed), and the PC
+port name (changes per machine and USB socket; tests take --port).
+
+## D-009 Team confirmation of the approach - ACCEPTED (2026-10-12)
+Team confirmed the plan on 12 Oct. Records D-001 (Tic-Tac-Toe), D-002 (stretch
+order AI, timer, undo), D-003 (UART via CMSIS registers) and the GUI library
+(Tkinter) as accepted.
+
+## D-010 Checksum: XOR, written *HH - ACCEPTED (2026-10-12), closes D-004
+XOR of all body bytes as two uppercase hex digits. Chosen over CRC-8 because it
+is trivial to implement on a Cortex-M0, easy to explain and test, and fits the
+brief's "checksum or CRC recommended". Known limit: misses swapped bytes and
+paired errors; state this in the report. Mandatory on server replies, optional
+but verified on client requests (so a terminal can still be used by hand).
+
+## D-011 Protocol v0.1 design choices - PROPOSED (2026-10-12), freeze after review
+See docs/protocol.md section 12 for the six items to review: terminal replies
+carry the board; optional :<mark> on MOVE (makes NACK:NOTURN testable with one
+client); extra codes TOOLONG/TIMEOUT/BADSUM/STATE; checksum optional on
+requests; DISCONNECT accepted in IDLE; button = local reset to IDLE with no
+unsolicited message. Other fixed choices: 115200 8N1, LF terminator (CR
+tolerated), max frame 32 bytes, 500 ms inactivity timeout, exactly one reply
+per frame, no unsolicited server messages in the core protocol.
+
+## D-012 Compressed schedule - ACCEPTED (2026-10-12)
+Stage 1 started on 12 Oct, about four days behind the 6 Oct plan. Remaining
+window is 12-24 Oct (25 Oct is a Sunday and buffer only). Required features
+come first; if time runs short, cut stretch features in this order: undo,
+timer, then AI. See docs/stages.md "Revised schedule".
