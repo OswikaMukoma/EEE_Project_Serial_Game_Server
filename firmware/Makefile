@@ -85,6 +85,14 @@ MCU = -mcpu=cortex-m0 -mthumb
 
 C_DEFS = -DSTM32F051x8 -DUSE_HAL_DRIVER
 
+# Stage 4 bring-up image (not the game): make BRINGUP=1  -> build/bringup/
+ifeq ($(BRINGUP),1)
+C_DEFS += -DBRINGUP
+C_SOURCES += Core/Src/bringup.c
+BUILD_DIR = build/bringup
+TARGET = BringUp
+endif
+
 C_INCLUDES =  \
 -ICore/Inc \
 -IDrivers/STM32F0xx_HAL_Driver/Inc \

@@ -96,3 +96,14 @@ into the mock; each must make pytest fail. The first run caught 14/15: a broken
 2-4-6 diagonal went unnoticed, so tests for all 8 lines x 2 players were added
 (now 15/15, docs/evidence/stage3_mutation_check.txt). Limit: this validates the
 tests, not the firmware; the same suite runs on the board in Stage 7.
+
+## D-015 Stage 4 bring-up image is a separate build - ACCEPTED (2026-10-12)
+`make -C firmware BRINGUP=1` builds firmware/build/bringup/BringUp.* from
+Core/Src/bringup.c (polled USART1 at 115200, LED colour test, banner TX, echo,
+SW0 test). It prints on the UART, which the game image must never do, so it is
+a separate image, not a flag inside the game. UART_AF is deliberately NOT
+defined in board.h: I could not read Table 14 of the datasheet from here (the
+fetched text had Table 13 only; HAL gpio_ex.h lists USART1 under both AF0 and
+AF1 without saying which pins), so the build stops with #error until a partner
+reads the value from Table 14 and records it in bringup-log.md. BRR is
+(8 MHz + 57600) / 115200 = 69, about 0.6 % baud error at 8 MHz HSI.

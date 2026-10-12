@@ -35,7 +35,7 @@ Drivers below are a suggestion (A/B) - fill in names in HANDOFF.md.
 
 ## Stage 4 - Hardware bring-up (B)
 - [x] UART path settled: ST-Link VCP, USART1 PA9/PA10 (D-008). Confirm AF number and port name on the bench
-- [ ] Transmit test ("Welcome to Binary" from the UART tutorial) readable in a terminal
+- [ ] (prepared, needs board) Transmit test ("Welcome to Binary" from the UART tutorial) readable in a terminal
 - [ ] Line-echo test: PC sends a line, board echoes it (proves RX before the framer)
 - [ ] Button and LED confirmed on the pins in firmware/Core/Inc/board.h
 - [ ] Circuit diagram (brief A.3): one USB cable -> ST-Link -> USART1 PA9/PA10; label button and LED; photo of the setup

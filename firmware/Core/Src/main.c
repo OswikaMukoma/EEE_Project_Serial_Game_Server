@@ -8,6 +8,9 @@
 
 #include "main.h"
 #include "board.h"
+#ifdef BRINGUP
+extern void bringup_run(void);   /* Stage 4 only, never returns */
+#endif
 
 void SystemClock_Config(void);
 
@@ -16,6 +19,9 @@ int main(void)
     HAL_Init();               /* starts SysTick at 1 ms (HAL_GetTick) */
     SystemClock_Config();
 
+#ifdef BRINGUP
+    bringup_run();
+#endif
     RCC->AHBENR |= RCC_AHBENR_GPIOBEN;
     (void)RCC->AHBENR;        /* read-back: let the clock enable settle */
 
