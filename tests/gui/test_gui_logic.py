@@ -147,3 +147,27 @@ def test_sound_wavs_are_valid():
         ms = sum(m for _, m in notes)
         assert w.getnchannels() == 1 and w.getsampwidth() == 2
         assert abs(w.getnframes() - sounds.RATE * ms / 1000) < len(notes) + 1, kind
+
+
+def test_play_uses_a_file_not_async_memory(monkeypatch, tmp_path):
+    """winsound raises RuntimeError for SND_MEMORY | SND_ASYNC; mimic that and check play() works."""
+    import sounds
+
+    class FakeWinsound:
+        SND_MEMORY, SND_ASYNC, SND_FILENAME = 0x4, 0x1, 0x20000
+        calls = []
+
+        @classmethod
+        def PlaySound(cls, sound, flags):
+            if flags & cls.SND_MEMORY and flags & cls.SND_ASYNC:
+                raise RuntimeError("Cannot play asynchronously from memory")
+            cls.calls.append((sound, flags))
+
+    monkeypatch.setattr(sounds, "winsound", FakeWinsound)
+    monkeypatch.setattr(sounds, "_files", {})
+    monkeypatch.setattr(sounds.tempfile, "gettempdir", lambda: str(tmp_path))
+    for kind in sounds.NOTES:
+        sounds.play(kind)
+    assert len(FakeWinsound.calls) == len(sounds.NOTES)          # every effect really played
+    path, flags = FakeWinsound.calls[0]
+    assert flags == FakeWinsound.SND_FILENAME | FakeWinsound.SND_ASYNC and os.path.exists(path)

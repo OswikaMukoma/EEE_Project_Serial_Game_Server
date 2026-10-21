@@ -6,7 +6,10 @@ Sounds are triggered only by confirmed server replies (see app.py), never by a c
 """
 import io
 import math
+import os
 import struct
+import sys
+import tempfile
 import wave
 
 try:
@@ -45,14 +48,32 @@ def make_wav(notes):
     return buf.getvalue()
 
 
+_files = {}
+_warned = False
+
+
+def _wav_path(kind):
+    """Write the effect to a small WAV file in the temp folder once, and reuse it.
+    (winsound cannot play SND_MEMORY data asynchronously, so we play from a file.)"""
+    path = _files.get(kind)
+    if path is None or not os.path.exists(path):
+        path = os.path.join(tempfile.gettempdir(), "serialgame_%s.wav" % kind)
+        with open(path, "wb") as f:
+            f.write(make_wav(NOTES[kind]))
+        _files[kind] = path
+    return path
+
+
 def play(kind, root=None):
-    """Play a named effect. Never raises: sound must not break the game."""
+    """Play a named effect. Never raises: sound must not break the game.
+    A failure is printed once on stderr (not on the game UART) so it is not silent."""
+    global _warned
     try:
         if winsound is not None:
-            if kind not in _cache:
-                _cache[kind] = make_wav(NOTES[kind])
-            winsound.PlaySound(_cache[kind], winsound.SND_MEMORY | winsound.SND_ASYNC)
+            winsound.PlaySound(_wav_path(kind), winsound.SND_FILENAME | winsound.SND_ASYNC)
         elif root is not None:
             root.bell()
-    except Exception:
-        pass
+    except Exception as exc:
+        if not _warned:
+            _warned = True
+            print("sound disabled: %s" % exc, file=sys.stderr)
