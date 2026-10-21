@@ -14,3 +14,10 @@ T3: echo test ...
    sent: b'Hello 123 ~!\n'  got: b'Hello 123 ~!\nBRINGUP TX 141\r\n'
 T2 transmit : PASS
 T3 echo     : PASS
+
+T1 LED (owner's report): red blinks 3 times, then green 3 times -> PB10 red, PB11 green.
+T4 button (owner's screenshot, miniterm COM9):
+  BRINGUP TX 1 / SW0 DOWN / BRINGUP TX 2 / SW0 UP / ... / SW0 DOWN / ... / SW0 UP
+  and the LED was red while SW0 was held.
+Stage 4 hardware facts confirmed: USART1 PA9/PA10 AF1 115200 8N1 over ST-Link VCP,
+SW0 = PA0 (active low), PB10 = red, PB11 = green.

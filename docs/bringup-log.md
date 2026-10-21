@@ -16,6 +16,6 @@ Paper checks (12 Oct, from the supplied PDFs, not yet bench-verified):
 | 2026-10-21 | owner | Flashed BringUp.elf with STM32_Programmer_CLI -c port=SWD -w ... -v -rst | Download verified successfully |
 | 2026-10-21 | owner | miniterm COM9 115200: "BRINGUP TX n" every second, clean text | T2 PASS: USART1 PA9/PA10, AF1, 115200 confirmed |
 | 2026-10-21 | owner | tests\bringup_check.py COM9 | T2 PASS, T3 echo PASS (docs/evidence/stage4_bringup_check.txt) |
-| | | T1 LED colour order, T4 SW0 | NOT YET REPORTED |
+| 2026-10-21 | owner | T1 LED: after reset red x3 then green x3. T4: hold SW0 -> LED red, terminal "SW0 DOWN" / release "SW0 UP" (3 presses seen) | T1 PASS (PB10 = red, PB11 = green confirmed), T4 PASS (SW0 = PA0 active low confirmed) |
 
 Notes: CubeIDE's Debug button stays disabled for this Makefile project (no device settings); flashing is done with STM32_Programmer_CLI instead. Two CubeIDE versions are installed (1.19.0 and 2.2.0).
