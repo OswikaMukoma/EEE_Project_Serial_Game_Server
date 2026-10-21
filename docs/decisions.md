@@ -134,3 +134,14 @@ including the 5 slow timeout tests (partial-frame NACK:TIMEOUT within 0.4-0.9 s,
 timeout, inactivity timer restart, no unsolicited replies). Evidence: docs/evidence/stage7_board_pytest.txt
 (committed on the owner's PC; push pending a GitHub permission fix) and stage7_board_pytest_partial.txt.
 Still to confirm by hand: LED (green = X, red = O, blink = game over) and SW0 reset.
+
+## D-019 GUI design (Stage 8) - ACCEPTED (2026-10-21)
+Tkinter (D-009), split into gui/client.py (protocol client + GameView, no Tk, unit-tested headless in
+tests/gui, 8 tests) and gui/app.py (window). Rules: board drawn only from a verified reply, never from a
+click; rejected moves change only the message; moves disabled after WIN/DRAW/RESIGN; NACK:NOGAME while the
+GUI thinks a game runs = device was reset, go to start screen; a lost reply triggers one STATE (protocol 10);
+CONNECT answered NACK:STATE is resolved with DISCONNECT (finished game -> idle, reconnect) or STATE (game
+running -> resync) because BOARD: alone cannot tell IN_PROGRESS from GAME_OVER. MOVE sends the claimed mark
+derived from the last confirmed board so a stale client gets NACK:NOTURN from the device. Worker thread for
+serial I/O. Screenshots made headlessly (gui/make_screenshots.py, docs/evidence/gui/) against the mock; the
+run on the real board is still to be done by the owner. Known limit: hot-seat only (one client, both sides).

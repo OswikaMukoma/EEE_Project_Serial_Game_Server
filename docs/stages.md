@@ -68,9 +68,9 @@ Still to confirm at the bench:
 - [ ] Serial captures of garbage / partial-frame recovery
 
 ## Stage 8 - GUI (B)
-- [ ] Connect, new game, move, specific NACK text, win/draw notice, moves disabled
+- [x] (mock-tested; board run pending) Connect, new game, move, specific NACK text, win/draw notice, moves disabled
       after game over, clean disconnect; redraw only from valid responses
-- [ ] GUI flowchart, screenshots
+- [x] GUI flowchart, screenshots (mock; redo screenshots on the board)
 
 ## Stage 9 - Stretch features (A then B)
 - [ ] Server-side AI (test: never illegal)

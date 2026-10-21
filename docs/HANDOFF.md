@@ -16,6 +16,10 @@ LED/button hand-check still to report. Owner's evidence commit (stage7_board_pyt
 until the GitHub permission issue is fixed (the PC is signed in as hazelkkkkk; repo owner is OswikaMukoma),
 then `git pull --rebase` and `git push`.
 
+## Update 21 Oct ~21:30: Stage 8 GUI written + mock-tested (D-019)
+Run on the board: `python gui\app.py --port COM9` (close terminals first). Hand-check pending: LED colours and SW0 via
+`python tests\play.py COM9`. Screenshots: docs/evidence/gui/, flowchart docs/diagrams/gui_flow.png.
+
 ## Next (steps 1-3 below are DONE)
 1. Build: `make -C firmware` (normal image, no BRINGUP) -> firmware/build/SerialGameServer.hex/.elf
 2. Flash with STM32_Programmer_CLI as in bringup-log.md (-c port=SWD -w ...elf -v -rst).
