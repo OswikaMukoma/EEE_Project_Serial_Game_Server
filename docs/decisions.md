@@ -145,3 +145,11 @@ running -> resync) because BOARD: alone cannot tell IN_PROGRESS from GAME_OVER. 
 derived from the last confirmed board so a stale client gets NACK:NOTURN from the device. Worker thread for
 serial I/O. Screenshots made headlessly (gui/make_screenshots.py, docs/evidence/gui/) against the mock; the
 run on the real board is still to be done by the owner. Known limit: hot-seat only (one client, both sides).
+
+## D-020 GUI theme, score and sound (owner's request) - ACCEPTED (2026-10-21)
+Owner asked for a warm amber board (reference: wooden tiles, brown X, white O), a score counter and sound.
+Board is now a Tk Canvas (gui/app.py); look is cosmetic only. Score = X wins / draws / O wins, kept in
+GameView.score, increased ONLY by a confirmed WIN/DRAW reply to a MOVE (not by a STATE resync, not by RESIGN),
+survives disconnect, "Reset score" button. Sound (gui/sounds.py): tones generated in memory, played with
+winsound on Windows, Tk bell elsewhere; on/off checkbox; chosen only from confirmed replies (placed X/O,
+error, win, draw, resign, new game, connect). Cannot be heard in the build sandbox: owner to confirm on Windows.

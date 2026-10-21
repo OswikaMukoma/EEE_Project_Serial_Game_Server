@@ -22,7 +22,11 @@ How to play (hot-seat, X first): Connect, New Game, click cells, Resign / New Ga
 - Disconnect resigns a running game first (the server refuses `DISCONNECT` mid-game), then closes the port.
 - Serial I/O runs in a worker thread, so the window never freezes; one request is in flight at a time.
 
+- Score (X wins / draws / O wins) counts only confirmed WIN/DRAW replies to a MOVE; Reset score clears it.
+- Sound effects (checkbox "Sound") play only for confirmed replies; Windows uses the standard-library winsound.
+- Appearance is a Tk Canvas; colours and sizes are the constants at the top of `app.py`.
+
 ## Files
-`app.py` window, `client.py` protocol client + `GameView` (no Tkinter, unit-tested in `tests/gui`),
+`app.py` window, `sounds.py` generated tones, `client.py` protocol client + `GameView` (no Tkinter, unit-tested in `tests/gui`),
 `make_screenshots.py` regenerates `docs/evidence/gui/*.png` headlessly (xvfb + ImageMagick),
 flow chart in `docs/diagrams/gui_flow.png`.

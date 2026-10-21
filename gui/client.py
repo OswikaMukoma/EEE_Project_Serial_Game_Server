@@ -99,6 +99,7 @@ class GameView:
     """What the window shows. Updated only through apply()."""
 
     def __init__(self):
+        self.score = {"X": 0, "O": 0, "draws": 0}
         self.reset()
 
     def reset(self):
@@ -106,6 +107,9 @@ class GameView:
         self.board = EMPTY
         self.result = ""             # "", "X wins!", "O wins!", "Draw", "Game over (resigned)"
         self.message = "Press Connect."
+
+    # The score survives reset(): it is only ever increased by a confirmed WIN/DRAW reply to a MOVE.
+    score = None
 
     # -- helpers
     def next_mark(self):
@@ -150,6 +154,11 @@ class GameView:
                 if state is not None:
                     self.state = state
                     self.result = result
+                    if request.startswith("MOVE:"):          # not for a STATE resync of an old game
+                        if result == "Draw":
+                            self.score["draws"] += 1
+                        else:
+                            self.score[result[0]] += 1
                     self.message = "Game over. Press New Game to play again."
                 elif prefix == "OK:BOARD:":
                     self.state, self.result = "IN_PROGRESS", ""

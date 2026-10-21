@@ -114,3 +114,36 @@ def test_no_reply_and_damaged_reply_raise(server):
         conn.close()
     finally:
         bad.stop()
+
+
+def test_score_counts_only_confirmed_results(pair):
+    v = pair[1]
+    assert v.score == {"X": 0, "O": 0, "draws": 0}
+    do(pair, "NEW")
+    for i in (4, 0, 3, 1):
+        do(pair, v.command_for_move(i))
+    assert v.score["X"] == 0                                   # nothing counted before the game ends
+    do(pair, v.command_for_move(5))
+    assert v.score == {"X": 1, "O": 0, "draws": 0}
+    do(pair, "STATE")                                          # resync of the same finished game
+    assert v.score["X"] == 1
+    do(pair, "NEW")
+    do(pair, "RESIGN")
+    assert v.score == {"X": 1, "O": 0, "draws": 0}             # resign is not scored
+    do(pair, "NEW")
+    for i in (0, 1, 2, 4, 3, 5, 7, 6, 8):
+        do(pair, v.command_for_move(i))
+    assert v.score == {"X": 1, "O": 0, "draws": 1}
+    do(pair, "DISCONNECT")
+    assert v.score == {"X": 1, "O": 0, "draws": 1}             # survives a disconnect
+
+
+def test_sound_wavs_are_valid():
+    import io
+    import wave
+    import sounds
+    for kind, notes in sounds.NOTES.items():
+        w = wave.open(io.BytesIO(sounds.make_wav(notes)))
+        ms = sum(m for _, m in notes)
+        assert w.getnchannels() == 1 and w.getsampwidth() == 2
+        assert abs(w.getnframes() - sounds.RATE * ms / 1000) < len(notes) + 1, kind

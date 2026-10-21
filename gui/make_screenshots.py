@@ -50,16 +50,13 @@ shot("gui_1_start.png")
 click(app.connect_btn); shot("gui_2_connected.png")
 click(app.new_btn)
 for i in (4, 0, 3):
-    click(app.cells[i])
+    app.on_cell(i); settle()
 shot("gui_3_playing.png")
-app.cells[4].config(state="normal"); app.cells[4].invoke(); settle()       # occupied: forced click
-app.view.board = app.view.board                                            # (view unchanged)
 app.send(["MOVE:4:O"]); settle()
 shot("gui_4_rejected_occupied.png")
 for i in (1, 5):
-    click(app.cells[i])
+    app.on_cell(i); settle()
 shot("gui_5_x_wins.png")
-click(app.resign_btn) if str(app.resign_btn["state"]) == "normal" else None
 click(app.disconnect_btn); shot("gui_6_disconnected.png")
 server.stop()
 root.destroy()
