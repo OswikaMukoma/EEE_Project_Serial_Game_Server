@@ -17,7 +17,7 @@ until the GitHub permission issue is fixed (the PC is signed in as hazelkkkkk; r
 then `git pull --rebase` and `git push`.
 
 ## Update 21 Oct ~21:30: Stage 8 GUI written + mock-tested (D-019)
-Run on the board: `python gui\app.py --port COM9` (close terminals first). Hand-check pending: LED colours and SW0 via
+Run on the board: `python gui\app.py --port COM9` (close terminals first). LED/SW0 hand-check DONE (D-021, owner report). Still to capture for the report: video/photos of LED states, play.py transcript, GUI run on the board, sound check. Earlier note: via
 `python tests\play.py COM9`. Screenshots: docs/evidence/gui/, flowchart docs/diagrams/gui_flow.png.
 
 ## Next (steps 1-3 below are DONE)

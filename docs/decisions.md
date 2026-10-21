@@ -153,3 +153,9 @@ GameView.score, increased ONLY by a confirmed WIN/DRAW reply to a MOVE (not by a
 survives disconnect, "Reset score" button. Sound (gui/sounds.py): tones generated in memory, played with
 winsound on Windows, Tk bell elsewhere; on/off checkbox; chosen only from confirmed replies (placed X/O,
 error, win, draw, resign, new game, connect). Cannot be heard in the build sandbox: owner to confirm on Windows.
+
+## D-021 Stage 6 hardware behaviour confirmed by the owner (2026-10-21)
+With the game firmware on the board and tests/play.py: NEW turns the LED green (X to move), MOVE:4 turns it red
+(O to move), RESIGN makes it flash (GAME_OVER), pressing SW0 switches it off (local reset to IDLE). Reported by
+the owner in chat; for the report, capture a short video or photo of each LED state and a play.py transcript
+showing STATE -> NACK:NOGAME after SW0 (not yet captured).
