@@ -127,3 +127,10 @@ socket; `pytest tests/ --port socket://127.0.0.1:5556` ran all 100 tests against
 docs/evidence/stage5_6_host_pytest.txt). That proves the logic, not the UART/LED/button glue,
 which is verified on the board in Stage 7. Bug caught while writing: the tick timestamp had to be
 read after draining the ring, otherwise now < last_ms underflows into a false NACK:TIMEOUT.
+
+## D-018 Stage 7 result: full suite passes on the real board - RECORDED (2026-10-21)
+`pytest tests --port COM9` against SerialGameServer.hex (built from a86f8c5): 100 passed in 91.96 s,
+including the 5 slow timeout tests (partial-frame NACK:TIMEOUT within 0.4-0.9 s, silent DISCARDING
+timeout, inactivity timer restart, no unsolicited replies). Evidence: docs/evidence/stage7_board_pytest.txt
+(committed on the owner's PC; push pending a GitHub permission fix) and stage7_board_pytest_partial.txt.
+Still to confirm by hand: LED (green = X, red = O, blink = game over) and SW0 reset.
