@@ -14,3 +14,4 @@ __pycache__/
 
 # host test binaries
 tests/core/test_game
+tests/host/host_server

@@ -114,3 +114,16 @@ project owner supplied: PA9 AF1 = USART1_TX, PA10 AF1 = USART1_RX. board.h now d
 UART_AF 1u. The UCT dev board schematic v1.06 (supplied) agrees with the pin plan: ST-Link
 VCP_RX/TX on PA9/PA10, SW0 on PA0, R/G LED on PB10/PB11 (R12 red, R13 green), D8 power LED.
 This is paper confirmation only; the bench tests in HANDOFF still have to pass.
+
+## D-017 Firmware architecture for Stages 5-6 - ACCEPTED (2026-10-21)
+server.c/.h (portable, no HAL) holds the framer, parser and dispatcher and is driven one byte
+at a time (server_rx) plus a periodic server_tick; each call writes at most one complete reply.
+uart.c is the only USART1 code: RX interrupt into a 128-byte ring (drops are counted, never
+silent), TX polled and bounded (a reply is at most 25 bytes, ~2.2 ms, while the RX interrupt
+keeps filling the ring). main.c is only the loop: drain ring -> server_rx -> send reply, tick,
+button (PA0, 30 ms debounce, press = server_reset, no message), LED (protocol.md section 9).
+Proof method: tests/host/host_server.c builds the SAME server.c + game.c for the PC behind a TCP
+socket; `pytest tests/ --port socket://127.0.0.1:5556` ran all 100 tests against it (100 passed,
+docs/evidence/stage5_6_host_pytest.txt). That proves the logic, not the UART/LED/button glue,
+which is verified on the board in Stage 7. Bug caught while writing: the tick timestamp had to be
+read after draining the ring, otherwise now < last_ms underflows into a false NACK:TIMEOUT.

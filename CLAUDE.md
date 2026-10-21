@@ -60,6 +60,7 @@ tests/      pytest harness + mock server; serial port via --port or env var
 make -C firmware            # build -> firmware/build/SerialGameServer.elf
 make -C firmware clean
 make -C tests/core test     # game core unit tests on the PC
+make -C tests/host          # real server.c+game.c on the PC (TCP socket)
 pytest tests/ --port mock   # mock server, no board (~2 min; -m "not slow" skips timeouts)
 python tests/mutation_check.py   # inject faults into the mock; all must be caught
 pytest tests/ --port COMx   # real board; close any terminal using that port

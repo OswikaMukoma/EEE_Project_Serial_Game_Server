@@ -1,41 +1,31 @@
 # HANDOFF (overwrite this file at the end of every turn)
 
-Partners: A = <name>, B = <name>   |   Due: 25 Oct 2026 23:59   |   Today: 12 Oct
+Partners: A = <name>, B = <name>   |   Due: 25 Oct 2026 23:59   |   Today: 21 Oct
 
-## Stages 1-3 done (12 Oct)
-- Protocol v1.0 frozen (D-013).
-- Stage 2: firmware/Core/Src/game.c + tests/core (50,546,417 checks, 0 failed);
-  evidence docs/evidence/stage2_core_tests.txt; report draft docs/report/05_game_logic_draft.md.
-- Stage 3: tests/ (mock_server.py, link.py, 100 pytest tests, all pass on the mock),
-  15/15 injected faults caught (D-014). Evidence: docs/evidence/stage3_*.txt.
-  tests/README.md explains commands.
-Open / honest caveats:
-- Second partner's own sign-off on protocol v1.0 is not recorded (D-013).
-- Stage 1 explain-back (quiz) not done yet; each module must be explained by the
-  driver and understood by the partner before it counts as done.
-- An older tests/core/test_game.c was overwritten by a rewrite (covers more); check it.
-- Unconfirmed on hardware: USART1 AF number, baud, SW0=PA0, R/G LED PB10/PB11.
-- Rejected-move LED blink was only suggested; not in the spec.
-- Plan PDF still shows the 6 Oct dates.
-## Stage 4 (12 Oct): bring-up image READY, hardware steps NOT done
-Claude cannot see or flash the board, so nothing below is verified on hardware yet.
-Prepared: firmware/Core/Src/bringup.c, `make -C firmware BRINGUP=1`, tests/bringup_check.py,
-UART_AF placeholder in board.h (D-015). Game build unchanged and still builds.
-Bench steps for the partner with the board (record each result in docs/bringup-log.md):
-1. DONE on paper (D-016): UART_AF = 1 from datasheet Table 14 p.37; schematic v1.06 agrees.
-   Just copy that into docs/bringup-log.md.
-2. `make -C firmware BRINGUP=1`, flash firmware/build/bringup/BringUp.bin (or .hex) with the
-   usual tool; note the COM port name (Device Manager) in the log.
-3. T1: after reset, 3 red then 3 green blinks? Write down which colour came first and whether
-   it matches board.h (PB10 red, PB11 green).
-4. Terminal (PuTTY etc., 115200 8N1) shows "BRINGUP TX n" each second. Screenshot -> docs/evidence/.
-5. Close the terminal, run `python tests/bringup_check.py COMx`; paste output into the log.
-6. Hold SW0: LED red and "SW0 DOWN"/"SW0 UP" in the terminal.
-7. Circuit diagram (brief A.3) and a photo of the setup.
-Then tell Claude the results; Stage 4 closes and Stage 5/6 firmware can start.
-Remaining caveats from before still stand (partner sign-off on D-013, Stage 1 explain-back,
-test_game.c rewrite, plan PDF dates, rejected-move LED idea).
+## State
+- Stages 1-4 done. Stage 4 confirmed on the real board (21 Oct): USART1 PA9/PA10 AF1 115200 via
+  ST-Link VCP (COM9 on owner's PC), SW0 = PA0 active low, PB10 red, PB11 green. Evidence in
+  docs/evidence/stage4_bringup_check.txt and docs/bringup-log.md. Circuit diagram photo still open.
+- Stages 5+6 WRITTEN, host-tested, NOT yet flashed: firmware/Core/Src/server.c (framer, parser,
+  dispatcher), uart.c (IRQ + ring), main.c (loop, button, LED). All 100 pytest tests pass against
+  the same server.c+game.c on the PC (docs/evidence/stage5_6_host_pytest.txt, D-017).
+- Flash size 6.4 KB of 64 KB.
+
+## Next (needs the board)
+1. Build: `make -C firmware` (normal image, no BRINGUP) -> firmware/build/SerialGameServer.hex/.elf
+2. Flash with STM32_Programmer_CLI as in bringup-log.md (-c port=SWD -w ...elf -v -rst).
+3. LED should be OFF (IDLE). Close any terminal, then `pytest tests/ --port COM9` (Stage 7). Save
+   output to docs/evidence/stage7_board_pytest.txt. Do NOT open a terminal at the same time.
+4. Manually: NEW -> LED green; MOVE -> alternates green/red; win/resign -> both blink 2 Hz;
+   press SW0 -> LED off (IDLE) with no reply.
+Then Stage 8 GUI (against `python tests/mock_server.py --listen 5555`), Stage 9 stretch only if time,
+Stage 10 package + report (10 pages max, disclose AI use).
+
+## Caveats still open
+- Partner sign-off on protocol v1.0 (D-013); Stage 1 explain-back; test_game.c was rewritten earlier;
+  the plan PDF has the 6 Oct dates; rejected-move LED blink is only an idea (not in spec).
+- Schedule: due 25 Oct 23:59; cut stretch features first (undo, timer, AI).
 
 ## Build and test
-make -C firmware ; make -C tests/core test ; pytest tests/ --port mock
-Re-render diagrams: docs/diagrams/render.sh
+make -C firmware ; make -C tests/core test ; make -C tests/host ; pytest tests/ --port mock
+Host firmware logic: tests/host/host_server 5556 &  then  pytest tests/ --port socket://127.0.0.1:5556

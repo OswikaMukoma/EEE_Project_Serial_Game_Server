@@ -55,13 +55,13 @@ Still to confirm at the bench:
 4. PA2/PA3 are buttons SW2/SW3; USART2 there is not free (not needed).
 
 ## Stage 5 - Firmware framing (A)
-- [ ] USART RX interrupt, ring buffer, line framer (max length, timeout, oversize -> NACK:BADCMD)
-- [ ] No blocking in parser; no extra output on the game UART
+- [x] USART RX interrupt, ring buffer, line framer (max length, timeout, oversize -> NACK:BADCMD)
+- [x] No blocking in parser; no extra output on the game UART
 - [ ] Robustness report section draft
 
 ## Stage 6 - Firmware FSM and dispatcher (B)
-- [ ] Command handlers on game.c; state table enforced (NOGAME / NOTURN)
-- [ ] Button = new game, LED = turn / game over
+- [x] Command handlers on game.c; state table enforced (NOGAME / NOTURN)
+- [x] Button = new game, LED = turn / game over
 
 ## Stage 7 - Hardware integration (A)
 - [ ] Full pytest suite passing against the real board; output saved to evidence/
