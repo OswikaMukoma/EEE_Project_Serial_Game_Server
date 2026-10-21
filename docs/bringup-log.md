@@ -19,3 +19,4 @@ Paper checks (12 Oct, from the supplied PDFs, not yet bench-verified):
 | 2026-10-21 | owner | T1 LED: after reset red x3 then green x3. T4: hold SW0 -> LED red, terminal "SW0 DOWN" / release "SW0 UP" (3 presses seen) | T1 PASS (PB10 = red, PB11 = green confirmed), T4 PASS (SW0 = PA0 active low confirmed) |
 
 Notes: CubeIDE's Debug button stays disabled for this Makefile project (no device settings); flashing is done with STM32_Programmer_CLI instead. Two CubeIDE versions are installed (1.19.0 and 2.2.0).
+| 2026-10-21 | owner | Flashed game firmware (commit a86f8c5) and ran `pytest tests --port COM9 -m "not slow"` | 95 passed, 5 deselected (docs/evidence/stage7_board_pytest_partial.txt) |

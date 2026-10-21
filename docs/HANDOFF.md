@@ -11,7 +11,12 @@ Partners: A = <name>, B = <name>   |   Due: 25 Oct 2026 23:59   |   Today: 21 Oc
   the same server.c+game.c on the PC (docs/evidence/stage5_6_host_pytest.txt, D-017).
 - Flash size 6.4 KB of 64 KB.
 
-## Next (needs the board)
+## Update 21 Oct 20:05: Stage 7 suite PASSES on the real board (100/100, 91.96 s). See D-018.
+LED/button hand-check still to report. Owner's evidence commit (stage7_board_pytest.txt) is local
+until the GitHub permission issue is fixed (the PC is signed in as hazelkkkkk; repo owner is OswikaMukoma),
+then `git pull --rebase` and `git push`.
+
+## Next (steps 1-3 below are DONE)
 1. Build: `make -C firmware` (normal image, no BRINGUP) -> firmware/build/SerialGameServer.hex/.elf
 2. Flash with STM32_Programmer_CLI as in bringup-log.md (-c port=SWD -w ...elf -v -rst).
 3. LED should be OFF (IDLE). Close any terminal, then `pytest tests/ --port COM9` (Stage 7). Save

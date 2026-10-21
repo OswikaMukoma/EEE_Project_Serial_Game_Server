@@ -64,7 +64,7 @@ Still to confirm at the bench:
 - [x] Button = new game, LED = turn / game over
 
 ## Stage 7 - Hardware integration (A)
-- [ ] Full pytest suite passing against the real board; output saved to evidence/
+- [x] Full pytest suite passing against the real board (100/100, 21 Oct); output saved to evidence/
 - [ ] Serial captures of garbage / partial-frame recovery
 
 ## Stage 8 - GUI (B)
