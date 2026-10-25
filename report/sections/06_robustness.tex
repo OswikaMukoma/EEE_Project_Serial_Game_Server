@@ -1,0 +1,45 @@
+\section{Protocol Robustness and Integrity}
+\label{sec:robust}
+
+Every malformed input is answered by a specific NACK and followed by recovery: the framer returns to its idle state at the next LF, and the
+game state is never touched. Table~\ref{tab:threats} maps each kind of bad input to its mechanism and test. All tests named ran on the board
+(100 of 100 passed, Sec.~\ref{sec:valid}), except where noted.
+
+\begin{table}[t]
+\centering
+\caption{Bad input, the server's handling, and the test that checks it.}
+\label{tab:threats}
+\scriptsize
+\begin{tabular}{@{}L{1.5cm}L{3.0cm}L{3.4cm}@{}}
+\toprule
+Bad input & Handling and response & Test \\
+\midrule
+Partial frame & 500 ms inactivity timer; \code{NACK:TIMEOUT}; remainder is a new frame & \tn{test_partial_frame_times_out}, \tn{test_inactivity_timer_restarts_on_each_byte} \\
+Oversize (33+ bytes) & \code{NACK:TOOLONG} at byte 33, skip to LF & \tn{test_32_byte_frame_accepted_33_rejected}, \tn{test_oversize_frames_get_exactly_one_nack} \\
+Garbage bytes & \code{NACK:BADCMD} per LF; next valid frame answered & \tn{test_random_garbage_never_breaks_the_server}, \tn{test_garbage_does_not_change_game} \\
+Unknown or wrong-case command & \code{NACK:BADCMD} & \tn{test_bad_command_variants} \\
+Corrupted bytes & XOR check; \code{NACK:BADSUM}; never executed & \tn{test_bad_checksum_never_executes_command} \\
+UART errors (overrun, framing) & ISR clears flags, counts; no reply possible & not tested on the board (counters cannot be read without writing to the game UART) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{A 500 ms inactivity timer abandons stalled frames}
+A full 32-byte frame takes about 2.8~ms at 115200 baud, so 500~ms fires only when a sender has really stalled, while a person typing in a terminal
+(whose bytes arrive in bursts of a line) is not cut off. The timer restarts on every byte and runs only while a frame is in progress, so an idle line costs nothing.
+The timeout is 500~ms in the code and the protocol. \ph{M2: observed partial-frame timeout on the board, 20 samples (min/median/max), from \texttt{tests/measure\_board.py}.}
+
+\subsection{Oversize and garbage input resynchronise at the next LF}
+Oversize input gets one \code{NACK:TOOLONG} at the 33rd byte and is then skipped silently to the next LF
+(\tn{test_discarding_times_out_silently} covers the case with no LF at all). Random binary data produces one reply per LF, which the tests count, and a
+valid frame afterwards is answered correctly. \ph{M5: 100 random garbage frames each followed by CONNECT; N of 100 recovered.}
+\ph{M4: bursts of 1--64 frames in one write; replies missing or wrong.}
+
+\subsection{Integrity: XOR catches every single-bit error but not swapped bytes}
+We computed the checksum's limits on the PC (\code{checksum_analysis.txt}): 0 of 2{,}512 single-bit errors are missed, 11.40\% of two-bit errors are missed,
+100\% of adjacent byte swaps are missed, and 0.417\% of random bodies pass by chance. XOR is therefore adequate against a single corrupted byte on a short USB cable, and it is not a defence
+against an adversary. The GUI treats a reply with a bad checksum as not received.
+
+\subsection{The server cannot block forever}
+Every loop is bounded. The main loop drains the ring buffer, which holds at most 128 bytes, and never waits for input. The framer holds 32 bytes and handles one byte per call. A reply is at most 25 bytes, so the polled transmit
+takes about 2.2~ms. Each byte waits for the USART's transmit-empty flag, which the hardware sets within one byte time (87~\textmu s); there is no software time-out on that wait, so a faulty USART would stall the loop, and we have not tested that case. The input timeout is a comparison of two timestamps, not a delay. No watchdog is used. \ph{M3: 2000 sustained requests on the board; count of wrong or missing replies. M1: request-to-reply latency over 300 samples (min/median/p95/max); includes ST-Link USB delay.}
