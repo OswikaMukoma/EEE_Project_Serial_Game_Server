@@ -31,7 +31,9 @@ class Link:
                 return line
             if time.monotonic() >= end:
                 return None
-            self.buf += self.ser.read(256)
+            # read(n) waits for n bytes or the timeout, which would quantise every latency to the
+            # 50 ms port timeout; asking for what is already waiting (at least 1) returns at once.
+            self.buf += self.ser.read(max(1, self.ser.in_waiting))
 
     def read_reply(self, timeout=1.0):
         """Next reply body (checksum verified), or None on timeout."""

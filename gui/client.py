@@ -73,7 +73,7 @@ class Connection:
                 return line
             if time.monotonic() >= end:
                 return None
-            self.buf += self.ser.read(256)
+            self.buf += self.ser.read(max(1, self.ser.in_waiting))   # returns as soon as a byte is there
 
     def request(self, body):
         """Send one command, return the verified reply body. ReplyError if none/damaged."""
