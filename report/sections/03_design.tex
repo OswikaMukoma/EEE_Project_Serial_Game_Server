@@ -47,7 +47,7 @@ GAME\_OVER. The button resets to IDLE from any state. The figure omits the frame
 Figure~\ref{fig:gui} shows the client flow. A request is placed on a worker thread, so the Tk main loop never waits on the serial
 port, and the main loop polls a result queue every 30~ms. On a reply the client first verifies the checksum; a missing or wrong
 one counts as not received. Only a verified \code{OK:BOARD}, \code{WIN}, \code{DRAW} or \code{BOARD} reply redraws the
-board, and a NACK shows its message and leaves the display as it was. After a win, draw or resign, cells are disabled until
+board, and a NACK shows its message and leaves the display as it was. A click on an occupied cell is sent anyway, so the board's \code{NACK:OCCUPIED} is what the user sees: the GUI does not decide legality. After a win, draw or resign, cells are disabled until
 \code{NEW}. On a lost reply (1~s timeout) the client sends \code{STATE} once and redraws from it, because \code{STATE} is safe
 to repeat; if that also fails it reports ``server not responding''. If a \code{MOVE} is answered \code{NACK:NOGAME}
 mid-game, the board was reset by its button, so the client returns to the start screen.

@@ -338,7 +338,9 @@ class App:
         self.refresh()
 
     def on_cell(self, i):
-        if self.view.can_move(i):                              # click only SENDS; no drawing here
+        # A click only SENDS; no drawing here. Occupied cells are sent too (the server, not the GUI,
+        # decides legality), so its NACK:OCCUPIED shows up as a message. Not sent when no game runs.
+        if self.view.state == "IN_PROGRESS" and not self.busy:
             self.send([self.view.command_for_move(i)])
 
     def on_disconnect(self):
