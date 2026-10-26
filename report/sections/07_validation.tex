@@ -10,7 +10,7 @@ action. Run with \code{python -m pytest tests --port COM9}. Results labelled \em
 \subsection{All 100 tests pass on the board; the suite detects 15 of 15 injected faults}
 Table~\ref{tab:required} maps each required case of the brief to a named test. Together with the state-table and robustness tests, the board
 run is \textbf{100 passed in 91.96~s} (29 required and win-line tests, 18 state-table tests, 53 robustness tests; \code{stage7_board_pytest.txt}). The
-same 100 tests pass on the mock and on the PC build of the real C logic (PC). The AI row is n/a because we did not implement an AI.
+same 100 tests pass on the mock and on the PC build of the real C logic (PC). The AI row covers the optional \code{NEW:AI} opponent: 13 further tests in \tn{test_ai.py} pass on the mock and on the PC build of the real C logic (113 of 113 with the original 100, PC), and the board result is \ph{AI-firmware board run: N passed in T s}. The figures above, 100 passed in 91.96~s, are from the firmware before the AI was added.
 
 A passing suite proves little unless it can fail. We injected 15 faults into the mock (for example a NACK:NOTURN that flips the turn anyway, an occupied cell that is overwritten, index 9 accepted, a stalled frame that never times out); the suite caught all 15 (PC mock, \code{stage3_mutation_check.txt}). The first run caught 14: a
 fault in the 2-4-6 diagonal went unnoticed because we tested too few lines, so we added a test for all 8 lines for both players (16 cases).
@@ -30,7 +30,7 @@ Occupied cell: \code{NACK:OCCUPIED}, board unchanged & \tn{test_occupied} & pass
 Out of range: \code{NACK:RANGE} & \tn{test_range} & pass \\
 Move after game over: \code{NACK:NOGAME} & \tn{test_x_wins_then_no_more_moves} & pass \\
 Scripted win and draw & \tn{test_x_wins_...}, \tn{test_o_wins}, \tn{test_draw}, \tn{test_each_line_wins} & pass \\
-AI never illegal (if implemented) & --- & n/a \\
+AI never illegal (if implemented) & \tn{test_ai_never_loses_and_never_cheats_against_random_x}, exhaustive \tn{test_ai.c} (PC) & \ph{board result} \\
 \bottomrule
 \end{tabular}
 \end{table}

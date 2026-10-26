@@ -4,7 +4,7 @@
 \subsection{Pure logic is separated from hardware, and the board decides everything}
 Table~\ref{tab:arch} divides the system. \code{game.c} and \code{server.c} contain no HAL or CMSIS calls, so the
 identical files are compiled for the Cortex-M0 and for the PC test builds; only \code{uart.c}, \code{main.c}
-and the button/LED code touch registers. The server owns the board, the turn, legality, win detection and
+and the button/LED code touch registers. The server owns the board, the turn, legality, win detection, the computer opponent's moves and
 the reply text. The client owns only presentation (drawing, score, sound) and the timing of its own requests. It never
 computes a legal move or a winner, so a buggy or hostile client can at worst be refused.
 
@@ -19,6 +19,7 @@ Module & HAL? & Responsibility \\
 \midrule
 \code{game.c} & no & 10-byte state, validate-then-commit, 8-line win test \\
 \code{server.c} & no & byte-driven framer, parser, checksum, dispatch to \code{game.c} \\
+\code{ai.c} & no & minimax opponent for O; only picks a cell, the move goes through \code{game.c} \\
 \code{uart.c} & yes & USART1 RX interrupt, 128-byte ring, polled TX \\
 \code{main.c} & yes & loop: drain ring, \code{server_rx}, \code{server_tick}, button, LED \\
 \code{client.py} & no & protocol client, checksum check, \code{GameView} (no Tk) \\
@@ -67,7 +68,7 @@ at 2~Hz (250~ms half-period in code) in GAME\_OVER.
 
 \begin{figure}[t]
 \centering
-\input{figures/circuit.tex}
+\resizebox{\linewidth}{!}{\input{figures/circuit.tex}}
 \caption{UART path to the PC and the button and LED pins.}
 \label{fig:circuit}
 \end{figure}

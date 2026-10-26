@@ -35,9 +35,9 @@ The board is nine characters, cells 0--8 left to right, top to bottom: \code{.} 
 \code{XO.XO....} has X at cells 0 and 3 and O at 1 and 4. X always moves first, and the side to move is X when
 the counts are equal, otherwise O, so a client can derive it from the board alone.
 
-\subsection{Six commands, each defined in every state}
-Table~\ref{tab:commands} lists the commands. The state table is total: all 18 command/state pairs have a defined
-reply, and a valid command in the wrong state gets \code{NACK:NOGAME} when it needs a running game and
+\subsection{Seven commands, each defined in every state}
+Table~\ref{tab:commands} lists the commands. The state table is total: all 18 command/state pairs of the six core commands have a defined
+reply (\code{NEW:AI} follows the \code{NEW} row), and a valid command in the wrong state gets \code{NACK:NOGAME} when it needs a running game and
 \code{NACK:STATE} otherwise. A game started or reset with the board's button sends nothing; the client finds out
 on its next request (\code{MOVE} gives \code{NACK:NOGAME}) and returns to its start screen.
 
@@ -52,6 +52,7 @@ Request & Accepted in & Success response \\
 \midrule
 \code{CONNECT} & IDLE & \code{OK} \\
 \code{NEW} & IDLE, GAME\_OVER & \code{OK:BOARD:.........} \\
+\code{NEW:AI}$^\dagger$ & IDLE, GAME\_OVER & \code{OK:BOARD:.........}; server plays O \\
 \code{MOVE:<i>[:<m>]}$^\dagger$ & IN\_PROGRESS & \code{OK:BOARD:<9>}, or \code{WIN:<m>:BOARD:<9>}$^\dagger$, or \code{DRAW:BOARD:<9>}$^\dagger$ \\
 \code{STATE} & IN\_PROGRESS, GAME\_OVER & \code{BOARD:<9>} \\
 \code{RESIGN} & IN\_PROGRESS & \code{OK:GAMEOVER} \\
@@ -86,7 +87,7 @@ Response & Sent when \\
 \end{tabular}
 \end{table}
 
-\subsection{Six departures from the brief, each justified}
+\subsection{Six departures and one extension, each justified}
 \begin{enumerate}\setlength\itemsep{0pt}
 \item \emph{Terminal replies carry the board} (\code{WIN:X:BOARD:...}). The client redraws from one reply instead of paying a \code{STATE} round trip.
 \item \emph{Optional \code{:<m>} on \code{MOVE}.} With one client an out-of-turn move cannot otherwise be sent, so \code{NACK:NOTURN} would be untestable. The GUI always sends the mark, so a stale client is detected.
@@ -94,6 +95,7 @@ Response & Sent when \\
 \item \emph{Checksum optional on requests}, mandatory on replies, to keep terminal testing possible.
 \item \emph{\code{DISCONNECT} accepted in IDLE}, so a client that connected but never started can leave cleanly.
 \item \emph{\code{STATE} in IDLE is \code{NACK:NOGAME}}, and \emph{\code{NEW} in progress is \code{NACK:STATE}} (resign first); the button is a local reset with no message.
+\item \emph{Extension \code{NEW:AI}} starts a game in which the human is X and the server answers each accepted move with its own O move before replying, so the reply shows both moves and there is still one reply per frame. Plain \code{NEW} is unchanged, so clients that ignore the extension are unaffected.
 \end{enumerate}
 
 Figure~\ref{fig:sequence} shows both halves of the protocol. In (a) a game runs from \code{CONNECT} to an X win; the

@@ -38,3 +38,8 @@ Stage 10 package + report (10 pages max, disclose AI use).
 ## Build and test
 make -C firmware ; make -C tests/core test ; make -C tests/host ; pytest tests/ --port mock
 Host firmware logic: tests/host/host_server 5556 &  then  pytest tests/ --port socket://127.0.0.1:5556
+
+## Update 26 Oct (evening): stretch AI merged
+`NEW:AI` (server plays O, minimax) merged into main: protocol.md section 15, D-022, `firmware/Core/Src/ai.c`, `tests/test_ai.py` (13), `tests/core/test_ai.c`,
+GUI "Play vs computer" checkbox. PC: 113/113 on the real C logic. Board: owner tested the game works; the saved pytest output of the AI firmware
+and a re-run of `tests/measure_board.py` (M1-M5) on it are still to be put in docs/evidence and the report (placeholders).

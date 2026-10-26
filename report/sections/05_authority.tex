@@ -27,6 +27,9 @@ if (r != GAME_RESULT_NONE) g->state = GAME_OVER;
 \end{lstlisting}
 \end{figure}
 
+\subsection{The AI opponent cannot bypass the rules}
+In a \code{NEW:AI} game the server picks O's cell with \code{ai_pick}, which only reads a copy of the board, and then makes the move through the same \code{game_move} shown in Listing~\ref{lst:move}. It therefore cannot play an occupied or out-of-range cell. The AI flag is kept in the server structure, not in \code{game_t}, so the 10-byte game and the exhaustive core tests are unchanged. The search is minimax with alpha-beta pruning, so O never loses. We checked this on the PC by letting X try every possible sequence of moves: 681 games, 0 X wins (498 O wins, 183 draws), and 936 AI moves, none illegal (\tn{test_ai.c}, PC). A rejected \code{MOVE} does not trigger an AI move (\tn{test_rejected_moves_do_not_wake_the_ai}).
+
 \subsection{Win and draw are decided by the server after each commit}
 After a commit, \code{game_evaluate} tests the eight lines (three rows, three columns, two diagonals) before testing for a full board, so a move
 that fills the last cell and completes a line is a win, not a draw. The server then ends the game and replies \code{WIN} or \code{DRAW}.
@@ -46,6 +49,7 @@ All positions reachable by legal play, each tried with every index and claim & 5
 Random calls (fixed seed): six commands, indices $-3$..12 & 2{,}000{,}000 calls, invariants held; 22{,}948 wins, 3{,}003 draws \\
 Independent Python brute force vs.\ C rules & 255{,}168 games: 131{,}184 X, 77{,}904 O, 46{,}080 draws; C reproduces them \\
 All 8 lines, both players, over the serial link & \tn{test_each_line_wins}, 16 cases; passes on the board \\
+All 936 AI moves, X plays every sequence & 681 games: 0 X wins, 0 illegal AI moves \\
 \bottomrule
 \end{tabular}
 \end{table}
