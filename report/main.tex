@@ -96,7 +96,7 @@ We built a Tic-Tac-Toe game in which an STM32F051 is the only referee and a Pyth
 Tkinter program is an untrusted display. The board holds the whole game in 10 bytes and
 changes it only after every check of a request has passed, so a rejected request cannot
 alter the game. Messages are ASCII lines of at most 32 bytes with an XOR checksum; the
-server answers every frame with exactly one reply, rejects oversize, corrupt, unknown and
+server answers each frame with exactly one reply (when the client waits for it), rejects oversize, corrupt, unknown and
 stalled frames with specific \code{NACK} codes, and recovers on the next valid frame. We test
 the same suite of 100 pytest cases against a PC mock, against the real C logic compiled for
 the PC, and against the board: all 100 pass on the board in 91.96~s. Fifteen deliberately

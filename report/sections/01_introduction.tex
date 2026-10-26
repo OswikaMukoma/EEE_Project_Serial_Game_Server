@@ -14,7 +14,7 @@ toolkit, and its \code{after()} polling suits our worker-thread design (Sec.~\re
 
 Three decisions shape the system. (i)~The rules are portable C with no hardware calls, so the same
 source runs on the Cortex-M0 and on a PC. (ii)~Messages are short ASCII lines with an XOR checksum, and
-every frame gets exactly one reply. (iii)~One pytest suite of 100 tests runs unchanged against a
+every frame gets exactly one reply (for clients that wait for replies). (iii)~One pytest suite of 100 tests runs unchanged against a
 Python mock, the real C logic on the PC, and the board. We reused the course
 base~\cite{coursebase} for start-up code and HAL drivers, and we used an AI assistant~\cite{aiuse}
 to draft code, tests, diagrams and text; both authors reviewed and ran every module.
