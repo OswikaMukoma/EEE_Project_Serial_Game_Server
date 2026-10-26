@@ -98,8 +98,8 @@ changes it only after every check of a request has passed, so a rejected request
 alter the game. Messages are ASCII lines of at most 32 bytes with an XOR checksum; the
 server answers each frame with exactly one reply (when the client waits for it), rejects oversize, corrupt, unknown and
 stalled frames with specific \code{NACK} codes, and recovers on the next valid frame. We test
-the same suite of 100 pytest cases against a PC mock, against the real C logic compiled for
-the PC, and against the board: all 100 pass on the board in 91.96~s. Fifteen deliberately
+the same suite of 113 pytest cases against a PC mock, against the real C logic compiled for
+the PC, and against the board: all 113 pass on the board. Fifteen deliberately
 injected faults are all caught by the suite, and an exhaustive PC run of the rules checks
 50.5 million cases, including 6.86 million illegal moves that left the game unchanged.
 \end{abstract}
