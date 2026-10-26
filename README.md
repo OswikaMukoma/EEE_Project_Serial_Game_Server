@@ -33,7 +33,11 @@ Close every program that uses the COM port, then from the repository root:
 ```
 STM32_Programmer_CLI -c port=SWD -w firmware/build/SerialGameServer.hex -v -rst
 ```
-(On Windows, if the command is not on PATH, search for `STM32_Programmer_CLI.exe` under `C:\Program Files\STMicroelectronics`.)
+On Windows PowerShell, where the tool is usually not on PATH, use this instead (it finds the tool itself):
+```
+$cli = (Get-ChildItem "C:\Program Files\STMicroelectronics","C:\ST" -Recurse -Filter STM32_Programmer_CLI.exe -ErrorAction SilentlyContinue | Select-Object -First 1).FullName
+& $cli -c port=SWD -w firmware\build\SerialGameServer.hex -v -rst
+```
 Expected end of output: `Download verified successfully` and `Software reset is performed`. If it says "No debug probe detected",
 install the ST-Link driver (section 1) and replug the USB cable.
 
@@ -50,9 +54,10 @@ More in `gui/README.md`.
 ## 6. Test
 All from the repository root. The same pytest suite runs against three targets.
 ```
-make -C tests/core test                       # game core unit tests on the PC (50.5 million checks) + AI exhaustive check
+make -C tests/core test                       # (Linux/macOS, needs gcc) game core unit tests on the PC (50.5 million checks) + AI exhaustive check
 python -m pytest tests --port mock            # Python mock server, no board (about 2 min)
-make -C tests/host && ./tests/host/host_server 5556 &     # the real server.c + game.c on the PC
+# Linux/macOS only (needs gcc and a POSIX shell): the real server.c + game.c on the PC
+make -C tests/host && ./tests/host/host_server 5556 &
 python -m pytest tests --port socket://127.0.0.1:5556
 python -m pytest tests --port COM9 -v         # the real board (flash it first; close other COM users); expect 125 passed
 python tests/mutation_check.py                # injects 15 faults into the mock; all must be caught
