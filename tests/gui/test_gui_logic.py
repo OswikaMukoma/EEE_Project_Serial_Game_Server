@@ -171,3 +171,14 @@ def test_play_uses_a_file_not_async_memory(monkeypatch, tmp_path):
     assert len(FakeWinsound.calls) == len(sounds.NOTES)          # every effect really played
     path, flags = FakeWinsound.calls[0]
     assert flags == FakeWinsound.SND_FILENAME | FakeWinsound.SND_ASYNC and os.path.exists(path)
+
+
+def test_ai_game_reply_with_both_moves_is_drawn_and_x_moves_next():
+    """NEW:AI then a MOVE whose reply already contains the computer's O (GameView.apply, no port)."""
+    v = GameView()
+    v.apply("NEW:AI", "OK:BOARD:.........")
+    assert v.state == "IN_PROGRESS" and v.message == "X to move."
+    v.apply("MOVE:0:X", "OK:BOARD:X...O....")
+    assert v.board == "X...O...." and v.next_mark() == "X"
+    v.apply("MOVE:1:X", "WIN:O:BOARD:XXO.O.O..")
+    assert v.state == "GAME_OVER" and v.score["O"] == 1

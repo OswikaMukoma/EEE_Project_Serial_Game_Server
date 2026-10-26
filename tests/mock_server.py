@@ -117,6 +117,8 @@ def parse_request(raw, faults=()):
         body = text
     if body in ("CONNECT", "NEW", "STATE", "RESIGN", "DISCONNECT"):
         return ("cmd", body, None, None)
+    if body == "NEW:AI":
+        return ("cmd", "NEW", "AI", None)
     if body.startswith("MOVE:"):
         arg = body[5:]
         mark = None
@@ -130,6 +132,51 @@ def parse_request(raw, faults=()):
     return ("err", "BADCMD")
 
 
+# --------------------------------------------------------------------------- AI (mirror of ai.c)
+def _line_won(board, who):
+    return any(all(board[i] == who for i in line) for line in LINES)
+
+
+def _search(board, turn, alpha, beta):
+    if _line_won(board, "O"):
+        return 1
+    if _line_won(board, "X"):
+        return -1
+    if "." not in board:
+        return 0
+    other = "X" if turn == "O" else "O"
+    best = -2 if turn == "O" else 2
+    for i in range(9):
+        if board[i] != ".":
+            continue
+        board[i] = turn
+        v = _search(board, other, alpha, beta)
+        board[i] = "."
+        if turn == "O":
+            best = max(best, v)
+            alpha = max(alpha, best)
+        else:
+            best = min(best, v)
+            beta = min(beta, best)
+        if alpha >= beta:
+            break
+    return best
+
+
+def _ai_pick(board):
+    b = list(board)
+    best, pick = -2, -1
+    for i in range(9):
+        if b[i] != ".":
+            continue
+        b[i] = "O"
+        v = _search(b, "X", -2, 2)
+        b[i] = "."
+        if v > best:
+            best, pick = v, i
+    return pick
+
+
 # --------------------------------------------------------------------------- game logic
 class ReferenceServer:
     """The three-state machine of protocol.md sections 5 and 6."""
@@ -139,6 +186,7 @@ class ReferenceServer:
         self.state = "IDLE"
         self.board = ["."] * 9
         self.turn = "X"
+        self.ai = False
 
     def board_str(self):
         return "".join(self.board)
@@ -165,6 +213,7 @@ class ReferenceServer:
         self.board = ["."] * 9
         self.turn = "X"
         self.state = "IN_PROGRESS"
+        self.ai = (index == "AI")
         return "OK:BOARD:" + EMPTY_BOARD
 
     def do_state(self, index, mark):
@@ -212,6 +261,16 @@ class ReferenceServer:
             self.state = "GAME_OVER"
             return "DRAW:BOARD:" + self.board_str()
         self.turn = "O" if who == "X" else "X"
+        if self.ai and self.turn == "O":
+            # NEW:AI game: the server answers with O's move; the reply shows both moves.
+            self.board[_ai_pick(self.board)] = "O"
+            if self._winner("O"):
+                self.state = "GAME_OVER"
+                return "WIN:O:BOARD:" + self.board_str()
+            if "." not in self.board:
+                self.state = "GAME_OVER"
+                return "DRAW:BOARD:" + self.board_str()
+            self.turn = "X"
         return "OK:BOARD:" + self.board_str()
 
 

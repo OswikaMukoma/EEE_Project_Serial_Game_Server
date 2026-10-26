@@ -4,6 +4,7 @@
   */
 #include <string.h>
 #include "server.h"
+#include "ai.h"
 
 #define LF 0x0A
 #define CR 0x0D
@@ -72,6 +73,12 @@ static void do_move(server_t *s, const char *arg, size_t n, char *body)
     game_result_t result;
     game_err_t e = game_move(&s->game, value, mark, &result);
     if (e != GAME_OK) { reply_error(body, e); return; }
+    if (s->ai && result == GAME_RESULT_NONE && game_side_to_move(&s->game) == 'O') {
+        /* NEW:AI game: the server answers with O's move, made through game_move() so it
+         * is validated like any other move. The reply shows the board after both moves. */
+        const int cell = ai_pick(s->game.board);
+        if (cell >= 0) { (void)game_move(&s->game, cell, 'O', &result); }
+    }
     switch (result) {
     case GAME_RESULT_WIN_X: reply_board(body, "WIN:X:BOARD:", &s->game); break;
     case GAME_RESULT_WIN_O: reply_board(body, "WIN:O:BOARD:", &s->game); break;
@@ -86,9 +93,9 @@ static void dispatch(server_t *s, const char *b, size_t n, char *body)
     if (n == 7 && memcmp(b, "CONNECT", 7) == 0) {
         e = game_connect(&s->game);
         if (e == GAME_OK) { strcpy(body, "OK"); } else { reply_error(body, e); }
-    } else if (n == 3 && memcmp(b, "NEW", 3) == 0) {
+    } else if ((n == 3 && memcmp(b, "NEW", 3) == 0) || (n == 6 && memcmp(b, "NEW:AI", 6) == 0)) {
         e = game_new(&s->game);
-        if (e == GAME_OK) { reply_board(body, "OK:BOARD:", &s->game); } else { reply_error(body, e); }
+        if (e == GAME_OK) { s->ai = (n == 6); reply_board(body, "OK:BOARD:", &s->game); } else { reply_error(body, e); }
     } else if (n == 5 && memcmp(b, "STATE", 5) == 0) {
         e = game_query(&s->game);
         if (e == GAME_OK) { reply_board(body, "BOARD:", &s->game); } else { reply_error(body, e); }
@@ -156,6 +163,7 @@ void server_reset_framer(server_t *s)
 void server_init(server_t *s)
 {
     game_init(&s->game);
+    s->ai = 0;
     server_reset_framer(s);
     s->last_ms = 0;
 }

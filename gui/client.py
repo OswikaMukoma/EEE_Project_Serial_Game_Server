@@ -128,7 +128,7 @@ class GameView:
         if reply.startswith("NACK:"):
             code = reply[5:]
             self.message = NACK_TEXT.get(code, "Rejected: " + code)
-            if code == "NOGAME" and self.state == "IN_PROGRESS" and request != "NEW":
+            if code == "NOGAME" and self.state == "IN_PROGRESS" and request not in ("NEW", "NEW:AI"):
                 # The device no longer has our game (button reset): back to the start screen.
                 self.reset()
                 self.message = "The device has no active game (it was reset or has finished). Press New Game."

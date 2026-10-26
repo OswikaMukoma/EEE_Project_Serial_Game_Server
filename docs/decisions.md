@@ -159,3 +159,9 @@ With the game firmware on the board and tests/play.py: NEW turns the LED green (
 (O to move), RESIGN makes it flash (GAME_OVER), pressing SW0 switches it off (local reset to IDLE). Reported by
 the owner in chat; for the report, capture a short video or photo of each LED state and a play.py transcript
 showing STATE -> NACK:NOGAME after SW0 (not yet captured).
+
+## D-022 (26 Oct 2026, branch stretch-ai) Server-side AI as `NEW:AI`
+Chose an opt-in command instead of changing `NEW`, so v1.0 behaviour and all 100 existing tests are untouched. The AI flag lives in
+`server_t`, not `game_t`, so the 10-byte game structure and the 50.5 M-check core tests are unchanged. The AI only picks a cell;
+the move goes through `game_move()`. Reply carries the board after both moves, which keeps one reply per frame and needs no unsolicited
+message. Minimax with alpha-beta rather than a heuristic so that "X never wins" can be proven by exhaustive test (tests/core/test_ai.c).

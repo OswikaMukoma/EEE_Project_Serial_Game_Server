@@ -303,3 +303,16 @@ timeout, and bad checksum (R1-R5).
 |---|---|---|
 | v0.1 | 12 Oct 2026 | First complete draft |
 | v1.0 | 12 Oct 2026 | Frozen. All six section-12 choices accepted unchanged |
+
+## 15. Stretch: play against the server (`NEW:AI`) - branch `stretch-ai`, NOT part of the v1.0 freeze
+Added on branch `stretch-ai`. Everything in sections 1-14 is unchanged for clients that do not send `NEW:AI`.
+- `NEW:AI`: accepted in exactly the states where `NEW` is (IDLE, GAME_OVER; `NACK:STATE` in IN_PROGRESS).
+  Reply `OK:BOARD:.........`. The human is X and moves first; the server plays O.
+- In an AI game, after an accepted `MOVE` that does not end the game, the server chooses O's reply and
+  commits it **before it replies**. The one reply to the `MOVE` shows the board after both moves
+  (`OK:BOARD:<9>`, or `WIN:O:BOARD:<9>` / `DRAW:BOARD:<9>` if O's move ended the game). If the human's move
+  ended the game (`WIN:X`, `DRAW`) the server does not move. Still exactly one reply per frame (R1).
+- The AI move is made through the same validate-then-commit `game_move()` as any move, so it cannot be illegal.
+  Strategy: minimax with alpha-beta, lowest index on ties; O never loses (X can never win an AI game).
+- A plain `NEW` starts a two-player game; `RESIGN`, `DISCONNECT` and the SW0 reset end the AI mode.
+- Errors are unchanged: a rejected `MOVE` never triggers an AI move. `NEW:AI` with trailing junk is `NACK:BADCMD`.

@@ -24,6 +24,7 @@ typedef enum { RX_IDLE = 0, RX_RECEIVING, RX_DISCARDING } rx_state_t;
 
 typedef struct {
     game_t     game;                       /* the authoritative game (10 bytes) */
+    uint8_t    ai;                         /* 1 = O is played by the server (NEW:AI) */
     rx_state_t rx;
     uint8_t    len;                        /* bytes held in buf                 */
     uint32_t   last_ms;                    /* time of the last received byte    */

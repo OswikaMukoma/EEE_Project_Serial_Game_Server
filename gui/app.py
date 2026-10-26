@@ -69,6 +69,9 @@ class App:
         self.connect_btn.pack(side="left")
         self.disconnect_btn = self.button(top, "Disconnect", self.on_disconnect)
         self.disconnect_btn.pack(side="left", padx=6)
+        self.vs_computer = tk.BooleanVar(value=False)
+        tk.Checkbutton(top, text="Play vs computer (you are X)", variable=self.vs_computer, bg=BG, fg=TEXT,
+                       selectcolor=BG, activebackground=BG, activeforeground=TEXT).pack(side="right", padx=8)
         tk.Checkbutton(top, text="Sound", variable=self.sound_on, bg=BG, fg=TEXT, selectcolor=BG,
                        activebackground=BG, activeforeground=TEXT).pack(side="right")
 
@@ -102,7 +105,7 @@ class App:
 
         bar = tk.Frame(root, bg=BG)
         bar.pack(pady=4)
-        self.new_btn = self.button(bar, "New Game", lambda: self.send(["NEW"]))
+        self.new_btn = self.button(bar, "New Game", lambda: self.send(["NEW:AI" if self.vs_computer.get() else "NEW"]))
         self.new_btn.pack(side="left", padx=4)
         self.resign_btn = self.button(bar, "Resign", lambda: self.send(["RESIGN"]))
         self.resign_btn.pack(side="left", padx=4)
@@ -231,7 +234,7 @@ class App:
             return "draw"
         if reply == "OK:GAMEOVER":
             return "resign"
-        if request == "NEW" and reply.startswith("OK:BOARD:"):
+        if request in ("NEW", "NEW:AI") and reply.startswith("OK:BOARD:"):
             return "new"
         if request == "CONNECT" and reply == "OK":
             return "connect"
