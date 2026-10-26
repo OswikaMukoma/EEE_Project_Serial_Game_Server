@@ -35,14 +35,13 @@ AI never illegal (if implemented) & \tn{test_ai_never_loses_and_never_cheats_aga
 \end{tabular}
 \end{table}
 
-\subsection{Screenshot: the GUI draws only what the server confirmed}
-Figure~\ref{fig:screenshot} shows the GUI after a rejected move. The status line shows the server's message and the board is as it was. The screenshot was taken against the
-\emph{mock server on a PC}, not the board, since it was produced by an automated script. \ph{Replace with a screenshot of the GUI connected to the board (COM port visible in the log).}
+\subsection{Screenshot: the GUI shows the board's refusal and the board is unchanged}
+Figure~\ref{fig:screenshot} is a screenshot of the GUI connected to the \emph{real board} on COM9 in a two-player game. The log on the right lists each frame (TX sent, RX checksum-verified reply): a move onto an occupied cell was sent and the board answered \code{NACK:OCCUPIED}, the status line shows ``That cell is already taken.'', and the board still shows X at cell 0 and O at cell 4. The GUI sends such clicks so that the refusal comes from the server, not from the client. The picture is cropped to the board and the log (the log is enlarged); no content was changed.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.62\linewidth]{figures/gui_4_rejected_occupied.png}
-\caption{GUI after a \code{MOVE} onto an occupied cell (mock server on a PC): \code{NACK:OCCUPIED}, board unchanged.}
+\includegraphics[width=\linewidth]{figures/gui_board_rejected.png}
+\caption{GUI connected to the board (COM9): \code{NACK:OCCUPIED} twice in the log, board unchanged.}
 \label{fig:screenshot}
 \end{figure}
 
