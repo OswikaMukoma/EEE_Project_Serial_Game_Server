@@ -1,6 +1,6 @@
 # HANDOFF (overwrite this file at the end of every turn)
 
-Partners: A = <name>, B = <name>   |   Due: 25 Oct 2026 23:59   |   Today: 21 Oct
+Partners: A = Oswika Mukoma (MKMOSW001), B = Hazel Kunyavapa (KNYCHI008)   |   Due: 25 Oct 2026 23:59   |   Today: 21 Oct
 
 ## State
 - Stages 1-4 done. Stage 4 confirmed on the real board (21 Oct): USART1 PA9/PA10 AF1 115200 via

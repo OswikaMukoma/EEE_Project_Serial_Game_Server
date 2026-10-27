@@ -19,8 +19,7 @@ Python mock, the real C logic on the PC, and the board. We reused the course
 base~\cite{coursebase} for start-up code and HAL drivers, and we used an AI assistant~\cite{aiuse}
 to draft code, tests, diagrams and text; both authors reviewed and ran every module.
 
-\textbf{Task allocation.} \ph{Hazel Kunyavapa and Oswika Mukoma: write who did what (for example
-firmware and protocol; GUI and test harness) and what you did together.}
+\textbf{Task allocation.} We alternated the driver role by stage, following our stage plan. Oswika Mukoma drove the protocol and FSM specification, the Python mock server and pytest harness, the firmware framing (interrupt, ring buffer, framer) and the hardware integration on the board. Hazel Kunyavapa drove the portable game core, the hardware bring-up, the firmware state machine and dispatcher, and the Tkinter GUI. The partner who was not driving reviewed and signed off each stage. We did the setup, the stretch AI opponent, the bench testing, the video and this report together.
 
 \textbf{Structure.} Section~\ref{sec:protocol} defines the protocol, Section~\ref{sec:design} gives the
 firmware and GUI design, Section~\ref{sec:impl} explains three code excerpts,
