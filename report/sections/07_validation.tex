@@ -9,7 +9,7 @@ action. Run with \code{python -m pytest tests --port COM9}. Results labelled \em
 
 \subsection{All 113 tests pass on the board; the suite detects 15 of 15 injected faults}
 Table~\ref{tab:required} maps each required case of the brief to a named test. Together with the state-table and robustness tests, the board
-run on the final firmware is \textbf{125 passed in 55.25~s}: 113 tests on the board (29 required and win-line tests, 18 state-table tests, 53 robustness tests and 13 AI tests) plus 12 GUI-logic tests that run on the PC against the mock (\code{ai_board_pytest.txt}). Before the AI was added the 100 original tests also passed on the board (91.96~s, \code{stage7_board_pytest.txt}). The
+run on the final firmware is \textbf{125 passed in 55.13~s}: 113 tests on the board (29 required and win-line tests, 18 state-table tests, 53 robustness tests and 13 AI tests) plus 12 GUI-logic tests that run on the PC against the mock (\code{ai_board_pytest.txt}). Before the AI was added the 100 original tests also passed on the board (91.96~s, \code{stage7_board_pytest.txt}). The
 same tests pass on the mock and on the PC build of the real C logic (PC). The AI row covers the optional \code{NEW:AI} opponent: 13 further tests in \tn{test_ai.py} pass on the mock, on the PC build of the real C logic (113 of 113 with the original 100) and on the board (above).
 
 A passing suite proves little unless it can fail. We injected 15 faults into the mock (for example a NACK:NOTURN that flips the turn anyway, an occupied cell that is overwritten, index 9 accepted, a stalled frame that never times out); the suite caught all 15 (PC mock, \code{stage3_mutation_check.txt}). The first run caught 14: a
