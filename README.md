@@ -15,8 +15,8 @@ Protocol (single source of truth): `docs/protocol.md`. Decisions: `docs/decision
 
 ## 2. Get the code
 ```
-git clone https://github.com/OswikaMukoma/EEE_Project_Serial_Game_Server.git
-cd EEE_Project_Serial_Game_Server
+git clone https://github.com/OswikaMukoma/Tic-Tac-Toe.git
+cd Tic-Tac-Toe
 ```
 
 ## 3. Build the firmware
